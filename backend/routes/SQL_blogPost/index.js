@@ -2,9 +2,7 @@ import express from 'express'
 
 const router = express.Router();
 import BlogPostModel from '../../models/BlogPost.js'
-
-import pagination from '../../apiMiddlewares/pagination.js'
-
+import db from '../../db/pg.js'
 /*
     GET /blog => returns the list of blog with author
     GET /blog /123 => returns a single blog with author
@@ -14,32 +12,34 @@ import pagination from '../../apiMiddlewares/pagination.js'
  */
 //POST /blog => create a new blogPost
 router.post('/', async (req, res) => {
-    let blogPostObj = req.body
-    {
-        "id": 1,
-        "category": "ARTICLE CATEGORY",
-        "title": "ARTICLE TITLE",
-        "cover":"ARTICLE COVER (IMAGE LINK)",
-        "read_time_value": 2,
-        "read_time_unit": "minute"
-        "author":"AUTHOR FOREIGN KEY",
-        "content": "HTML",
-        "created_at": "DATE"
+    let blogPostObj = {
+        id, category,
+        title, cover, author, content,
+        read_time_value,
+        read_time_unit,
+        created_at
     }
+    blogPostObj = req.body
 
-    let query =
-        `PREPARE createBlogPost() AS` +
-        `UPDATE blogPosts `
-        `ÈXECUTE createBlogPost( ${category} , ${title} , ${cover}  , ${author} , ${content}  )`
+    db.query(```
+        INSERT INTO blogPosts (
+            id , category ,
+            title , cover , author , content ,
+            read_time_value , read_time_unit , created_at )
+        VALUES ( ${new Array(15).reduce( (acc, elem , i) => acc = acc + `$${i}`  ,'') } )
+        ``` ,
+    [   blogPostObj.id  ,  blogPostObj.category  ,
+        blogPostObj.title  ,  blogPostObj.cover  ,  blogPostObj.author  ,  blogPostObj.content  ,
+        blogPostObj.read_time_value  ,  blogPostObj.read_time_unit  ,  blogPostObj.created_at ])
     res.send(blogPost)
 })
 
-router.get('/',async (req, res) => {
+router.get('/', async (req, res) => {
 
     if (res.paginatedResults !== {}) {
         res.status(200).send(res.paginatedResults)
-    }else{
-        const BlogPostList = await BlogPostModel.find({},{},{},)
+    } else {
+        const BlogPostList = await BlogPostModel.find({}, {}, {},)
         res.status(200).send(BlogPostList)
     }
 

@@ -17,9 +17,12 @@
     "mongoose": "^5.10.9",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.4",
     "rehype-parse": "^7.0.1",
     "rehype-remark": "^8.0.0",
     "remark-stringify": "^8.1.1",
+    "sequelize": "^6.6.5",
     "unified": "^9.2.0"
   }
 }
